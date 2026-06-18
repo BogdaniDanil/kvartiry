@@ -22,8 +22,14 @@ function isValidEmail(email) {
 
 // Показать ошибку
 function showError(input, message) {
-  const formGroup = input.closest('.form-group');
-  let errorElement = formGroup.querySelector('.error-message');
+  // Для чекбокса ищем родительский элемент по-другому
+  const parentElement = input.type === 'checkbox' 
+    ? input.parentElement 
+    : input.closest('.form-group');
+  
+  if (!parentElement) return;
+  
+  let errorElement = parentElement.querySelector('.error-message');
   
   if (!errorElement) {
     errorElement = document.createElement('div');
@@ -31,23 +37,30 @@ function showError(input, message) {
     errorElement.style.color = '#dc3545';
     errorElement.style.fontSize = '0.85em';
     errorElement.style.marginTop = '5px';
-    formGroup.appendChild(errorElement);
+    parentElement.appendChild(errorElement);
   }
   
   errorElement.textContent = message;
-  input.style.borderColor = '#dc3545';
+  input.style.borderColor = input.type === 'checkbox' ? '' : '#dc3545';
 }
 
 // Убрать ошибку
 function clearError(input) {
-  const formGroup = input.closest('.form-group');
-  const errorElement = formGroup.querySelector('.error-message');
+  const parentElement = input.type === 'checkbox' 
+    ? input.parentElement 
+    : input.closest('.form-group');
+  
+  if (!parentElement) return;
+  
+  const errorElement = parentElement.querySelector('.error-message');
   
   if (errorElement) {
     errorElement.remove();
   }
   
-  input.style.borderColor = '';
+  if (input.type !== 'checkbox') {
+    input.style.borderColor = '';
+  }
 }
 
 // Валидация формы
@@ -55,7 +68,7 @@ function validateForm() {
   let isValid = true;
 
   // Очистка предыдущих ошибок
-  [nameInput, emailInput, messageInput].forEach(clearError);
+  [nameInput, emailInput, messageInput, consentCheckbox].forEach(clearError);
 
   // Валидация имени
   if (!nameInput.value.trim()) {
