@@ -22,42 +22,32 @@ function isValidEmail(email) {
 
 // Показать ошибку
 function showError(input, message) {
-  // Для чекбокса ищем родительский элемент по-другому
-  const parentElement = input.type === 'checkbox' 
-    ? input.parentElement 
-    : input.closest('.form-group');
-  
-  if (!parentElement) return;
-  
-  let errorElement = parentElement.querySelector('.error-message');
-  
-  if (!errorElement) {
-    errorElement = document.createElement('div');
-    errorElement.className = 'error-message';
-    errorElement.style.color = '#dc3545';
-    errorElement.style.fontSize = '0.85em';
-    errorElement.style.marginTop = '5px';
-    parentElement.appendChild(errorElement);
-  }
-  
+  // Создаем элемент ошибки
+  let errorElement = document.createElement('div');
+  errorElement.className = 'error-message';
+  errorElement.style.color = '#dc3545';
+  errorElement.style.fontSize = '0.85em';
+  errorElement.style.marginTop = '5px';
   errorElement.textContent = message;
-  input.style.borderColor = input.type === 'checkbox' ? '' : '#dc3545';
+  
+  // Вставляем ошибку после поля ввода
+  input.parentNode.insertBefore(errorElement, input.nextSibling);
+  
+  // Добавляем красную границу (кроме чекбокса)
+  if (input.type !== 'checkbox') {
+    input.style.borderColor = '#dc3545';
+  }
 }
 
 // Убрать ошибку
 function clearError(input) {
-  const parentElement = input.type === 'checkbox' 
-    ? input.parentElement 
-    : input.closest('.form-group');
-  
-  if (!parentElement) return;
-  
-  const errorElement = parentElement.querySelector('.error-message');
-  
-  if (errorElement) {
-    errorElement.remove();
+  // Ищем следующий элемент с классом error-message
+  const nextElement = input.nextElementSibling;
+  if (nextElement && nextElement.classList.contains('error-message')) {
+    nextElement.remove();
   }
   
+  // Убираем красную границу
   if (input.type !== 'checkbox') {
     input.style.borderColor = '';
   }
