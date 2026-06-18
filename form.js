@@ -20,17 +20,22 @@ function isValidEmail(email) {
   return regex.test(email);
 }
 
-// Показать ошибку
+// Показать ошибку рядом с полем
 function showError(input, message) {
+  if (!input) return;
+  
+  // Сначала удаляем старую ошибку, если она есть
+  clearError(input);
+  
   // Создаем элемент ошибки
-  let errorElement = document.createElement('div');
+  const errorElement = document.createElement('div');
   errorElement.className = 'error-message';
   errorElement.style.color = '#dc3545';
   errorElement.style.fontSize = '0.85em';
   errorElement.style.marginTop = '5px';
   errorElement.textContent = message;
   
-  // Вставляем ошибку после поля ввода
+  // Вставляем ошибку сразу после поля ввода
   input.parentNode.insertBefore(errorElement, input.nextSibling);
   
   // Добавляем красную границу (кроме чекбокса)
@@ -41,7 +46,9 @@ function showError(input, message) {
 
 // Убрать ошибку
 function clearError(input) {
-  // Ищем следующий элемент с классом error-message
+  if (!input) return;
+  
+  // Ищем следующий элемент — если это ошибка, удаляем
   const nextElement = input.nextElementSibling;
   if (nextElement && nextElement.classList.contains('error-message')) {
     nextElement.remove();
@@ -58,7 +65,10 @@ function validateForm() {
   let isValid = true;
 
   // Очистка предыдущих ошибок
-  [nameInput, emailInput, messageInput, consentCheckbox].forEach(clearError);
+  clearError(nameInput);
+  clearError(emailInput);
+  clearError(messageInput);
+  clearError(consentCheckbox);
 
   // Валидация имени
   if (!nameInput.value.trim()) {
@@ -156,7 +166,15 @@ form.addEventListener('submit', async (e) => {
 });
 
 // Очистка ошибок при вводе
-[nameInput, emailInput, messageInput, consentCheckbox].forEach(input => {
-  input.addEventListener('input', () => clearError(input));
-  input.addEventListener('change', () => clearError(input));
-});
+if (nameInput) {
+  nameInput.addEventListener('input', () => clearError(nameInput));
+}
+if (emailInput) {
+  emailInput.addEventListener('input', () => clearError(emailInput));
+}
+if (messageInput) {
+  messageInput.addEventListener('input', () => clearError(messageInput));
+}
+if (consentCheckbox) {
+  consentCheckbox.addEventListener('change', () => clearError(consentCheckbox));
+}
