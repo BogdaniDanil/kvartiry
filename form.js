@@ -69,26 +69,34 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Функция отправки данных на сервер
-    async function sendToServer(data) {
-        try {
-            const response = await fetch('/api/contact', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            });
-            
-            if (!response.ok) {
-                throw new Error('Ошибка отправки');
-            }
-            
-            const result = await response.json();
-            console.log('Успешно отправлено:', result);
-        } catch (error) {
-            console.error('Ошибка:', error);
-            alert('Произошла ошибка при отправке. Пожалуйста, попробуйте позже.');
-        }
+ // ===== НАСТРОЙКИ SUPABASE =====
+const SUPABASE_URL = 'https://dxwgoyeqjldzsdnsgqhu.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4d2dveWVxamxkenNkbnNncWh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE4MDEwNTUsImV4cCI6MjA5NzM3NzA1NX0.387RYRaIRdktT-UVvYHqXFua_U5qJJq6gn63IZJ2nMw';
+
+async function sendToServer(data) {
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/contact_requests`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+      },
+      body: JSON.stringify({
+        name: data.name,
+        email: data.email,
+        message: data.message,
+        consent: data.consent
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Ошибка отправки');
     }
-});
+
+    console.log('Успешно отправлено в Supabase');
+  } catch (error) {
+    console.error('Ошибка:', error);
+    alert('Произошла ошибка при отправке. Пожалуйста, попробуйте позже.');
+  }
+}
