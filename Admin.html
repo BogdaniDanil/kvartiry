@@ -1,750 +1,707 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Заявки - Высотки</title>
-    <script src="https://kit.fontawesome.com/257d1fe005.js" crossorigin="anonymous"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', Arial, Helvetica, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админ-панель — Заявки</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            background: #f5f7fb;
-        }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
 
-        /* Header */
-        .header {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
 
-        .logo-text {
-            font-size: 28px;
-            font-weight: 800;
-            color: #2B7AF1;
-        }
+    .header h1 {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
 
-        .header-icons {
-            display: flex;
-            gap: 15px;
-        }
+    .api-status {
+      display: inline-block;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      margin-top: 10px;
+    }
 
-        .header-icon {
-            width: 45px;
-            height: 45px;
-            background: #2B7AF1;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 20px;
-            transition: 0.3s;
-        }
+    .api-status.success {
+      background: rgba(255,255,255,0.2);
+    }
 
-        .header-icon:hover {
-            background: #1a5bbf;
-            transform: scale(1.05);
-        }
+    .api-status.error {
+      background: rgba(255,0,0,0.3);
+    }
 
-        /* Заголовок */
-        .page-title {
-            font-size: 32px;
-            color: #2B7AF1;
-            font-weight: 800;
-            margin-bottom: 25px;
-        }
+    /* ===== ФОРМА ЛОГИНА ===== */
+    #loginSection {
+      padding: 50px 30px;
+      text-align: center;
+    }
 
-        /* Статус API */
-        .api-status {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 12px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
+    #loginSection h2 {
+      margin-bottom: 30px;
+      color: #333;
+    }
 
-        .api-status.success {
-            background: #d4edda;
-            border-left-color: #28a745;
-            color: #155724;
-        }
+    .login-form {
+      max-width: 400px;
+      margin: 0 auto;
+    }
 
-        .api-status.error {
-            background: #f8d7da;
-            border-left-color: #dc3545;
-            color: #721c24;
-        }
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
 
-        /* Статистика */
-        .stats {
-            display: flex;
-            gap: 30px;
-            flex-wrap: wrap;
-            background: white;
-            padding: 20px 25px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-weight: 500;
+    }
 
-        .stat-item {
-            display: flex;
-            align-items: baseline;
-            gap: 8px;
-            font-size: 14px;
-            color: #666;
-        }
+    .form-group input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1em;
+      transition: border-color 0.3s;
+    }
 
-        .stat-number {
-            font-size: 28px;
-            font-weight: 800;
-            color: #2B7AF1;
-        }
+    .form-group input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
 
-        /* Кнопка обновления */
-        .refresh-btn {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 20px;
-        }
+    .login-btn {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
 
-        .refresh-button {
-            background: linear-gradient(135deg, #FF7A00, #FFB039);
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.3s;
-        }
+    .login-btn:hover {
+      transform: translateY(-2px);
+    }
 
-        .refresh-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 122, 0, 0.3);
-        }
+    .login-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
 
-        .refresh-button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+    .error-message {
+      background: #fee;
+      color: #c33;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 15px;
+      display: none;
+    }
 
-        /* Таблица */
-        .table-wrapper {
-            background: white;
-            border-radius: 20px;
-            overflow-x: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
+    /* ===== АДМИН-ПАНЕЛЬ ===== */
+    #adminSection {
+      display: none;
+    }
 
-        .requests-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 800px;
-        }
+    .stats {
+      display: flex;
+      gap: 20px;
+      padding: 20px 30px;
+      background: #f8f9fa;
+      flex-wrap: wrap;
+    }
 
-        .requests-table th,
-        .requests-table td {
-            padding: 16px 15px;
-            text-align: left;
-            border-bottom: 1px solid #eef2f7;
-        }
+    .stat-card {
+      flex: 1;
+      min-width: 200px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
 
-        .requests-table th {
-            background: linear-gradient(135deg, #2B7AF1, #1a5bbf);
-            color: white;
-            font-weight: 600;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+    .stat-card h3 {
+      color: #666;
+      font-size: 0.9em;
+      margin-bottom: 10px;
+    }
 
-        .requests-table th:first-child {
-            border-radius: 20px 0 0 0;
-        }
+    .stat-card .value {
+      font-size: 2em;
+      font-weight: bold;
+      color: #667eea;
+    }
 
-        .requests-table th:last-child {
-            border-radius: 0 20px 0 0;
-        }
+    .controls {
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
 
-        .requests-table tr:hover {
-            background: #f8f9ff;
-        }
+    .refresh-btn {
+      padding: 12px 25px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background 0.3s;
+    }
 
-        .message-cell {
-            max-width: 250px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    .refresh-btn:hover {
+      background: #5568d3;
+    }
 
-        .badge-success {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            display: inline-block;
-        }
+    .refresh-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
 
-        .badge-danger {
-            background: linear-gradient(135deg, #dc3545, #c82333);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            display: inline-block;
-        }
+    .logout-btn {
+      padding: 12px 25px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+    }
 
-        .delete-btn {
-            background: linear-gradient(135deg, #dc3545, #c82333);
-            color: white;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 15px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
+    .table-container {
+      padding: 0 30px 30px;
+      overflow-x: auto;
+    }
 
-        .delete-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
 
-        .delete-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
+    thead {
+      background: #667eea;
+      color: white;
+    }
 
-        /* Состояния загрузки */
-        .loading {
-            text-align: center;
-            padding: 60px;
-            color: #6c757d;
-        }
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
 
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #2B7AF1;
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 0.6s linear infinite;
-            margin-left: 10px;
-            vertical-align: middle;
-        }
+    tbody tr:hover {
+      background: #f8f9fa;
+    }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+    .message-cell {
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
-        .empty-state {
-            text-align: center;
-            padding: 60px;
-            color: #adb5bd;
-        }
+    .badge-success {
+      background: #d4edda;
+      color: #155724;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 0.85em;
+    }
 
-        .empty-state i {
-            font-size: 48px;
-            margin-bottom: 15px;
-            display: block;
-        }
+    .badge-danger {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 0.85em;
+    }
 
-        /* Модальное окно */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            animation: fadeIn 0.3s ease;
-        }
+    .delete-btn {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
 
-        .modal.show {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    .delete-btn:hover {
+      background: #c82333;
+    }
 
-        .modal__content {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            max-width: 400px;
-            width: 90%;
-            position: relative;
-            text-align: center;
-            animation: slideIn 0.3s ease;
-        }
+    .loading {
+      text-align: center;
+      padding: 50px;
+      color: #666;
+    }
 
-        .modal__close {
-            position: absolute;
-            right: 15px;
-            top: 10px;
-            font-size: 28px;
-            cursor: pointer;
-            color: #999;
-        }
+    .empty-state {
+      text-align: center;
+      padding: 50px;
+      color: #999;
+      display: none;
+    }
 
-        .modal__close:hover {
-            color: #333;
-        }
+    /* ===== МОДАЛКА ===== */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
 
-        .modal__icon {
-            width: 60px;
-            height: 60px;
-            line-height: 60px;
-            border-radius: 50%;
-            background: #dc3545;
-            color: white;
-            font-size: 30px;
-            margin: 0 auto 20px;
-        }
+    .modal.show {
+      display: flex;
+    }
 
-        .modal__title {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 22px;
-        }
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 500px;
+      width: 90%;
+    }
 
-        .modal__message {
-            color: #666;
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
+    .modal-content h3 {
+      margin-bottom: 20px;
+    }
 
-        .modal__buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-        }
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
 
-        .modal__btn {
-            padding: 10px 25px;
-            border-radius: 25px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-        }
+    .btn-cancel {
+      padding: 10px 20px;
+      background: #6c757d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
 
-        .modal__btn--cancel {
-            background: #6c757d;
-            color: white;
-        }
+    .btn-confirm {
+      padding: 10px 20px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
 
-        .modal__btn--confirm {
-            background: linear-gradient(135deg, #dc3545, #c82333);
-            color: white;
-        }
-
-        .modal__btn:hover {
-            transform: translateY(-2px);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateY(-30px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        /* Footer */
-        .footer {
-            background: linear-gradient(135deg, #2B7AF1, #1a5bbf);
-            color: white;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 40px;
-        }
-
-        .footer-logo {
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 20px;
-        }
-
-        .social-links a {
-            color: white;
-            font-size: 24px;
-            transition: 0.3s;
-        }
-
-        .social-links a:hover {
-            opacity: 0.8;
-            transform: translateY(-3px);
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px 15px;
-            }
-            .page-title {
-                font-size: 24px;
-            }
-            .stats {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .requests-table th,
-            .requests-table td {
-                padding: 12px 10px;
-                font-size: 13px;
-            }
-            .footer {
-                flex-direction: column;
-                text-align: center;
-            }
-        }
-    </style>
+    @media (max-width: 768px) {
+      .stats {
+        flex-direction: column;
+      }
+      
+      table {
+        font-size: 0.9em;
+      }
+      
+      th, td {
+        padding: 10px 5px;
+      }
+    }
+  </style>
 </head>
-
 <body>
-
-    <header class="header container header--background">
-        <div class="content">
-            <div class="header-left">
-              
-                <div class="logo__icon">
-                   <a href="index.html"><img class="logo__icon-image" src="Group 1(1).png" alt=""></a> 
-                </div>
-            </div>
-        <div class="header-right">
-            <div class="icon__wrapper">
-                <a class="header__icon icon" href=""><i class="fa-solid fa-phone"></i></a>
-                <a class="header__icon icon" href=""><i class="fa-solid fa-envelope"></i></a>
-            </div>
-        </div>
-        </div>
-    </header>
-
-    <div class="container">
-        <h1 class="page-title">📋 Список заявок</h1>
-
-        <div class="api-status" id="apiStatus">
-            <i class="fa-solid fa-circle-info"></i> API: /api/requests
-        </div>
-
-        <div class="stats" id="stats" style="display: none;">
-            <div class="stat-item">
-                <span>📊 Всего:</span>
-                <span class="stat-number" id="totalCount">0</span>
-            </div>
-            <div class="stat-item">
-                <span>✅ С согласием:</span>
-                <span class="stat-number" id="consentCount">0</span>
-            </div>
-            <div class="stat-item">
-                <span>📅 Последняя:</span>
-                <span id="lastDate" style="font-size: 14px; color: #666;">—</span>
-            </div>
-        </div>
-
-        <div class="refresh-btn">
-            <button class="refresh-button" id="refreshBtn">
-                <i class="fa-solid fa-arrows-rotate"></i> Обновить
-            </button>
-        </div>
-
-        <div class="table-wrapper">
-            <div id="loadingIndicator" class="loading">
-                Загрузка заявок <span class="loading-spinner"></span>
-            </div>
-            <table class="requests-table" id="requestsTable" style="display: none;">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Имя</th>
-                        <th>Email</th>
-                        <th>Сообщение</th>
-                        <th>Согласие</th>
-                        <th>Дата создания</th>
-                        <th>Действия</th>
-                    </tr>
-                </thead>
-                <tbody id="requestsTableBody"></tbody>
-            </table>
-            <div id="emptyState" class="empty-state" style="display: none;">
-                <i class="fa-regular fa-folder-open"></i>
-                Нет заявок
-            </div>
-        </div>
+  <div class="container">
+    <div class="header">
+      <h1><i class="fa-solid fa-shield-halved"></i> Админ-панель</h1>
+      <div id="apiStatus" class="api-status">
+        <i class="fa-solid fa-spinner fa-spin"></i> Проверка подключения...
+      </div>
     </div>
 
-    <div class="footer">
-        <div class="footer-logo">ВЫСОТКИ</div>
-        <div class="social-links">
-            <a href="https://vk.com/vysotki_miass" target="_blank"><i class="fa-brands fa-vk"></i></a>
-            
+    <!-- ===== СЕКЦИЯ ЛОГИНА ===== -->
+    <div id="loginSection">
+      <h2><i class="fa-solid fa-lock"></i> Вход в админ-панель</h2>
+      <form id="loginForm" class="login-form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" required placeholder="your@email.com">
         </div>
+        <div class="form-group">
+          <label for="password">Пароль</label>
+          <input type="password" id="password" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="login-btn" id="loginBtn">
+          <i class="fa-solid fa-right-to-bracket"></i> Войти
+        </button>
+        <div id="loginError" class="error-message"></div>
+      </form>
     </div>
 
-    <!-- Модальное окно подтверждения -->
-    <div class="modal" id="deleteModal">
-        <div class="modal__content">
-            <span class="modal__close" id="closeModal">&times;</span>
-            <div class="modal__icon">
-                <i class="fa-solid fa-trash"></i>
-            </div>
-            <h2 class="modal__title">Подтверждение удаления</h2>
-            <p class="modal__message" id="deleteMessage">Вы уверены, что хотите удалить эту заявку?</p>
-            <div class="modal__buttons">
-                <button class="modal__btn modal__btn--cancel" id="cancelDeleteBtn">Отмена</button>
-                <button class="modal__btn modal__btn--confirm" id="confirmDeleteBtn">Удалить</button>
-            </div>
+    <!-- ===== АДМИН-ПАНЕЛЬ ===== -->
+    <div id="adminSection">
+      <div class="stats">
+        <div class="stat-card">
+          <h3>Всего заявок</h3>
+          <div class="value" id="totalCount">0</div>
         </div>
-    </div>
+        <div class="stat-card">
+          <h3>С согласием</h3>
+          <div class="value" id="consentCount">0</div>
+        </div>
+        <div class="stat-card">
+          <h3>Последняя заявка</h3>
+          <div class="value" id="lastDate" style="font-size: 1em;">—</div>
+        </div>
+      </div>
 
-    <script>
-        const API_URL = '/api/requests';
-        let currentDeleteId = null;
-        let currentDeleteName = null;
+      <div class="controls">
+        <button class="refresh-btn" id="refreshBtn">
+          <i class="fa-solid fa-arrows-rotate"></i> Обновить
+        </button>
+        <button class="logout-btn" id="logoutBtn">
+          <i class="fa-solid fa-right-from-bracket"></i> Выйти
+        </button>
+      </div>
 
-        async function loadRequests() {
-            const loadingEl = document.getElementById('loadingIndicator');
-            const table = document.getElementById('requestsTable');
-            const tbody = document.getElementById('requestsTableBody');
-            const emptyState = document.getElementById('emptyState');
-            const apiStatus = document.getElementById('apiStatus');
-            const statsDiv = document.getElementById('stats');
-            const refreshBtn = document.getElementById('refreshBtn');
-
-            refreshBtn.disabled = true;
-            refreshBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Загрузка...';
-
-            try {
-                loadingEl.style.display = 'block';
-                table.style.display = 'none';
-                emptyState.style.display = 'none';
-                statsDiv.style.display = 'none';
-                apiStatus.className = 'api-status';
-                apiStatus.innerHTML = '<i class="fa-solid fa-circle-info"></i> Загрузка данных...';
-
-                const response = await fetch(API_URL);
-                
-                if (!response.ok) {
-                    throw new Error(`Ошибка HTTP: ${response.status}`);
-                }
-                
-                const requests = await response.json();
-                
-                loadingEl.style.display = 'none';
-                apiStatus.className = 'api-status success';
-                apiStatus.innerHTML = '<i class="fa-solid fa-check-circle"></i> API работает ✓';
-                
-                if (!requests || requests.length === 0) {
-                    emptyState.style.display = 'block';
-                    statsDiv.style.display = 'none';
-                    return;
-                }
-                
-                table.style.display = 'table';
-                statsDiv.style.display = 'flex';
-                tbody.innerHTML = '';
-                
-                const sorted = [...requests].sort((a, b) => b.id - a.id);
-                
-                const total = sorted.length;
-                const consentCount = sorted.filter(r => r.consent === 1 || r.consent === true).length;
-                const lastDate = sorted[0]?.created_at || '—';
-                
-                document.getElementById('totalCount').textContent = total;
-                document.getElementById('consentCount').textContent = consentCount;
-                document.getElementById('lastDate').textContent = formatDate(lastDate);
-                
-                sorted.forEach(req => {
-                    const row = tbody.insertRow();
-                    
-                    row.insertCell(0).textContent = req.id;
-                    row.insertCell(1).textContent = req.name || '—';
-                    row.insertCell(2).textContent = req.email || '—';
-                    
-                    const msgCell = row.insertCell(3);
-                    const msgText = req.message || '—';
-                    msgCell.innerHTML = `<div class="message-cell" title="${escapeHtml(msgText)}">${escapeHtml(msgText)}</div>`;
-                    
-                    const consentCell = row.insertCell(4);
-                    if (req.consent === 1 || req.consent === true) {
-                        consentCell.innerHTML = '<span class="badge-success">✅ Согласен</span>';
-                    } else {
-                        consentCell.innerHTML = '<span class="badge-danger">❌ Не согласен</span>';
-                    }
-                    
-                    row.insertCell(5).textContent = formatDate(req.created_at);
-                    
-                    const actionsCell = row.insertCell(6);
-                    const deleteBtn = document.createElement('button');
-                    deleteBtn.className = 'delete-btn';
-                    deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i> Удалить';
-                    deleteBtn.onclick = () => showDeleteModal(req.id, req.name);
-                    actionsCell.appendChild(deleteBtn);
-                });
-                
-            } catch (error) {
-                console.error('Ошибка:', error);
-                loadingEl.style.display = 'none';
-                emptyState.style.display = 'block';
-                emptyState.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i><br>⚠️ Не удалось загрузить заявки.<br><small>Проверьте подключение к API</small>';
-                statsDiv.style.display = 'none';
-                apiStatus.className = 'api-status error';
-                apiStatus.innerHTML = '<i class="fa-solid fa-exclamation-triangle"></i> Ошибка подключения к API';
-            } finally {
-                refreshBtn.disabled = false;
-                refreshBtn.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> Обновить';
-            }
-        }
-
-        function showDeleteModal(id, name) {
-            currentDeleteId = id;
-            currentDeleteName = name;
-            const messageEl = document.getElementById('deleteMessage');
-            messageEl.innerHTML = `Вы уверены, что хотите удалить заявку <strong>#${id}</strong> от <strong>${escapeHtml(name || 'пользователя')}</strong>?`;
-            const modal = document.getElementById('deleteModal');
-            modal.classList.add('show');
-        }
-
-        async function deleteRequest() {
-            if (!currentDeleteId) return;
-            
-            const confirmBtn = document.getElementById('confirmDeleteBtn');
-            const originalText = confirmBtn.innerHTML;
-            confirmBtn.disabled = true;
-            confirmBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Удаление...';
-            
-            try {
-                console.log(`Удаление заявки ID: ${currentDeleteId}`);
-                
-                const response = await fetch(`${API_URL}/${currentDeleteId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                const result = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(result.error || 'Ошибка при удалении');
-                }
-                
-                console.log('Успешно удалено:', result);
-                hideModal();
-                await loadRequests();
-                
-            } catch (error) {
-                console.error('Ошибка удаления:', error);
-                alert('Не удалось удалить заявку: ' + error.message);
-            } finally {
-                confirmBtn.disabled = false;
-                confirmBtn.innerHTML = originalText;
-            }
-        }
-
-        function hideModal() {
-            const modal = document.getElementById('deleteModal');
-            modal.classList.remove('show');
-            currentDeleteId = null;
-            currentDeleteName = null;
-        }
-
-        function formatDate(dateStr) {
-            if (!dateStr) return '—';
-            try {
-                const date = new Date(dateStr.replace(' ', 'T'));
-                return date.toLocaleString('ru-RU', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-            } catch {
-                return dateStr;
-            }
-        }
-
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            });
-        }
+      <div class="table-container">
+        <div id="loadingIndicator" class="loading" style="display:none;">
+          <i class="fa-solid fa-spinner fa-spin"></i> Загрузка данных...
+        </div>
         
-        document.getElementById('refreshBtn').addEventListener('click', loadRequests);
-        document.getElementById('closeModal').addEventListener('click', hideModal);
-        document.getElementById('cancelDeleteBtn').addEventListener('click', hideModal);
-        document.getElementById('confirmDeleteBtn').addEventListener('click', deleteRequest);
+        <div id="emptyState" class="empty-state">
+          <i class="fa-solid fa-inbox" style="font-size: 3em; margin-bottom: 20px;"></i>
+          <p>Заявок пока нет</p>
+        </div>
+
+        <table id="requestsTable" style="display:none;">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Имя</th>
+              <th>Email</th>
+              <th>Сообщение</th>
+              <th>Согласие</th>
+              <th>Дата</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody id="requestsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== МОДАЛКА УДАЛЕНИЯ ===== -->
+  <div id="deleteModal" class="modal">
+    <div class="modal-content">
+      <h3><i class="fa-solid fa-triangle-exclamation"></i> Подтверждение удаления</h3>
+      <p id="deleteMessage"></p>
+      <div class="modal-buttons">
+        <button class="btn-cancel" id="cancelDeleteBtn">Отмена</button>
+        <button class="btn-confirm" id="confirmDeleteBtn">
+          <i class="fa-solid fa-trash"></i> Удалить
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== НАСТРОЙКИ SUPABASE =====
+    const SUPABASE_URL = 'https://dxwgoyeqjldzsdnsgqhu.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4d2dveWVxamxkenNkbnNncWh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE4MDEwNTUsImV4cCI6MjA5NzM3NzA1NX0.387RYRaIRdktT-UVvYHqXFua_U5qJJq6gn63IZJ2nMw';
+
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Элементы интерфейса
+    const loginSection = document.getElementById('loginSection');
+    const adminSection = document.getElementById('adminSection');
+    const loginForm = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const requestsTable = document.getElementById('requestsTable');
+    const emptyState = document.getElementById('emptyState');
+    const apiStatus = document.getElementById('apiStatus');
+
+    let currentDeleteId = null;
+
+    // ===== ПРОВЕРКА АВТОРИЗАЦИИ =====
+    async function checkAuth() {
+      const { data: { session } } = await db.auth.getSession();
+      
+      if (session) {
+        showAdminPanel();
+      } else {
+        showLogin();
+      }
+    }
+
+    function showLogin() {
+      loginSection.style.display = 'block';
+      adminSection.style.display = 'none';
+      apiStatus.className = 'api-status';
+      apiStatus.innerHTML = '<i class="fa-solid fa-lock"></i> Требуется вход';
+    }
+
+    function showAdminPanel() {
+      loginSection.style.display = 'none';
+      adminSection.style.display = 'block';
+      apiStatus.className = 'api-status success';
+      apiStatus.innerHTML = '<i class="fa-solid fa-check-circle"></i> Supabase подключён ✓';
+      loadRequests();
+    }
+
+    // ===== ОБРАБОТКА ЛОГИНА =====
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      loginError.style.display = 'none';
+      
+      loginBtn.disabled = true;
+      loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Вход...';
+
+      const { data, error } = await db.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+      if (error) {
+        loginError.textContent = 'Неверный email или пароль';
+        loginError.style.display = 'block';
+        loginBtn.disabled = false;
+        loginBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Войти';
+      } else {
+        showAdminPanel();
+      }
+    });
+
+    // ===== ВЫХОД =====
+    logoutBtn.addEventListener('click', async () => {
+      await db.auth.signOut();
+      showLogin();
+    });
+
+    // ===== ЗАГРУЗКА ЗАЯВОК =====
+    async function loadRequests() {
+      refreshBtn.disabled = true;
+      refreshBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Загрузка...';
+      
+      loadingIndicator.style.display = 'block';
+      requestsTable.style.display = 'none';
+      emptyState.style.display = 'none';
+
+      try {
+        const { data: requests, error } = await db
+          .from('contact_requests')
+          .select('*')
+          .order('id', { ascending: false });
+
+        if (error) {
+          throw error;
+        }
+
+        loadingIndicator.style.display = 'none';
+
+        if (!requests || requests.length === 0) {
+          emptyState.style.display = 'block';
+          document.getElementById('stats').style.display = 'none';
+          return;
+        }
+
+        requestsTable.style.display = 'table';
+        document.getElementById('stats').style.display = 'flex';
         
-        window.addEventListener('click', (event) => {
-            const modal = document.getElementById('deleteModal');
-            if (event.target === modal) {
-                hideModal();
-            }
+        const tbody = document.getElementById('requestsTableBody');
+        tbody.innerHTML = '';
+
+        // Статистика
+        const total = requests.length;
+        const consentCount = requests.filter(r => r.consent === true).length;
+        const lastDate = requests[0]?.created_at || '—';
+
+        document.getElementById('totalCount').textContent = total;
+        document.getElementById('consentCount').textContent = consentCount;
+        document.getElementById('lastDate').textContent = formatDate(lastDate);
+
+        // Отрисовка таблицы
+        requests.forEach(req => {
+          const row = tbody.insertRow();
+          row.insertCell(0).textContent = req.id;
+          row.insertCell(1).textContent = req.name || '—';
+          row.insertCell(2).textContent = req.email || '—';
+
+          const msgCell = row.insertCell(3);
+          const msgText = req.message || '—';
+          msgCell.innerHTML = `<div class="message-cell" title="${escapeHtml(msgText)}">${escapeHtml(msgText)}</div>`;
+
+          const consentCell = row.insertCell(4);
+          consentCell.innerHTML = req.consent
+            ? '<span class="badge-success">✅ Согласен</span>'
+            : '<span class="badge-danger">❌ Не согласен</span>';
+
+          row.insertCell(5).textContent = formatDate(req.created_at);
+
+          const actionsCell = row.insertCell(6);
+          const deleteBtn = document.createElement('button');
+          deleteBtn.className = 'delete-btn';
+          deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i> Удалить';
+          deleteBtn.onclick = () => showDeleteModal(req.id, req.name);
+          actionsCell.appendChild(deleteBtn);
         });
-        
-        loadRequests();
-        setInterval(loadRequests, 30000);
-    </script>
-</body>
 
+      } catch (error) {
+        console.error('Ошибка загрузки:', error);
+        loadingIndicator.style.display = 'none';
+        emptyState.style.display = 'block';
+        emptyState.innerHTML = `
+          <i class="fa-solid fa-circle-exclamation" style="font-size: 3em; margin-bottom: 20px;"></i>
+          <p>⚠️ Не удалось загрузить заявки</p>
+          <small>${error.message}</small>
+        `;
+      } finally {
+        refreshBtn.disabled = false;
+        refreshBtn.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> Обновить';
+      }
+    }
+
+    // ===== УДАЛЕНИЕ ЗАЯВКИ =====
+    function showDeleteModal(id, name) {
+      currentDeleteId = id;
+      document.getElementById('deleteMessage').innerHTML = 
+        `Вы уверены, что хотите удалить заявку <strong>#${id}</strong> от <strong>${escapeHtml(name || 'пользователя')}</strong>?`;
+      document.getElementById('deleteModal').classList.add('show');
+    }
+
+    function hideModal() {
+      document.getElementById('deleteModal').classList.remove('show');
+      currentDeleteId = null;
+    }
+
+    document.getElementById('cancelDeleteBtn').addEventListener('click', hideModal);
+    
+    document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+      if (!currentDeleteId) return;
+
+      const confirmBtn = document.getElementById('confirmDeleteBtn');
+      confirmBtn.disabled = true;
+      confirmBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Удаление...';
+
+      try {
+        const { error } = await db
+          .from('contact_requests')
+          .delete()
+          .eq('id', currentDeleteId);
+
+        if (error) {
+          throw error;
+        }
+
+        hideModal();
+        loadRequests(); // Обновляем список
+
+      } catch (error) {
+        console.error('Ошибка удаления:', error);
+        alert('Не удалось удалить заявку: ' + error.message);
+      } finally {
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = '<i class="fa-solid fa-trash"></i> Удалить';
+      }
+    });
+
+    window.addEventListener('click', (event) => {
+      if (event.target === document.getElementById('deleteModal')) {
+        hideModal();
+      }
+    });
+
+    // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
+    function formatDate(dateStr) {
+      if (!dateStr) return '—';
+      try {
+        const date = new Date(dateStr);
+        return date.toLocaleString('ru-RU', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      } catch {
+        return dateStr;
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/[&<>"']/g, function(m) {
+        return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        }[m];
+      });
+    }
+
+    // ===== ЗАПУСК =====
+    refreshBtn.addEventListener('click', loadRequests);
+    checkAuth();
+    
+    // Автообновление каждые 30 секунд
+    setInterval(() => {
+      if (adminSection.style.display !== 'none') {
+        loadRequests();
+      }
+    }, 30000);
+  </script>
+</body>
 </html>
