@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Высотки - Аренда квартир</title>
+    <!-- Montserrat Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- СБРОС И БАЗОВЫЕ СТИЛИ --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Montserrat', sans-serif; color: #333; background-color: #fff; line-height: 1.5; }
+        /* .container { max-width: 1200px; margin: 0 auto; padding: 20px; } */
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        :root {
+            --primary-blue: #2b7af1;
+            --accent-orange: #ff8c00;
+            --text-grey: #555;
+            --light-grey: #f4f4f4;
+        }
+
+        /* --- СЕКЦИЯ О НАС (ИЗ ФОТО 1) --- */
+        .about-section { padding: 40px 0; }
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+        }
+        .about-text {
+            font-size: 15px;
+            color: #444;
+            max-width: 800px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .about-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-top: 30px;
+        }
+        .stat-item-about {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .stat-item-about .icon-wrapper {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .stat-item-about .icon-wrapper i {
+            font-size: 36px;
+            color: var(--primary-blue);
+        }
+        /* Имитация разноцветных векторных иконок (синий контур) */
+        .stat-item-about .icon-wrapper img { width: 100%; height: auto; }
+
+        .stat-content h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+        .stat-content p {
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* --- КОНТАКТЫ И КАРТА (ИЗ ФОТО 2) --- */
+        .contacts-section { padding: 40px 0; border-top: 1px solid #eee; }
+        .contact-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 16px;
+        }
+        .contact-item i {
+            color: var(--primary-blue);
+            font-size: 20px;
+            width: 25px;
+            text-align: center;
+        }
+        .btn-subscribe {
+            background-color: var(--accent-orange);
+            color: #fff;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        .social-icons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .social-icons i {
+            font-size: 24px;
+            color: var(--primary-blue);
+            cursor: pointer;
+        }
+        /* Карта */
+        .map-wrapper {
+            width: 100%;
+            height: 400px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+        }
+        .map-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* --- ОТЗЫВЫ (СИНЯЯ СЕКЦИЯ) (ИЗ ФОТО 3) --- */
+        .reviews-section {
+            background-color: var(--primary-blue);
+            padding: 60px 0;
+            color: #fff;
+        }
+        .reviews-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }
+        .reviews-title { font-size: 24px; font-weight: 700; }
+        .quotes-icon {
+            font-size: 60px;
+            color: #ffb347; /* Оранжевый оттенок для кавычек */
+            opacity: 0.8;
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .review-card {
+            background: #fff;
+            color: #333;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .review-name { font-weight: 600; color: var(--primary-blue); font-size: 16px; }
+        .stars { color: #ffcc00; }
+        .review-text { font-size: 14px; color: #555; line-height: 1.5; margin-bottom: 10px; }
+        .review-meta { font-size: 12px; color: #999; margin-top: 5px; }
+
+        /* --- ФОРМА (ИЗ ФОТО 3) --- */
+        .contact-form-section { padding: 60px 0; text-align: center; }
+        .form-title { font-size: 32px; color: var(--primary-blue); font-weight: 700; margin-bottom: 30px; }
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .form-input {
+            padding: 15px 20px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            font-size: 14px;
+            width: 100%;
+            outline: none;
+            transition: border 0.3s;
+        }
+        .form-input:focus { border-color: var(--primary-blue); }
+        .form-textarea {
+            border-radius: 15px;
+            min-height: 100px;
+            resize: vertical;
+        }
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+        .checkbox-wrapper a { color: var(--primary-blue); text-decoration: underline; }
+        .btn-submit {
+            background-color: var(--accent-orange);
+            color: #fff;
+            border: none;
+            padding: 15px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-submit:hover { opacity: 0.9; }
+
+        /* --- ФУТЕР --- */
+        .site-footer {
+            background-color: var(--primary-blue);
+            color: #fff;
+            padding: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .footer-logo { font-weight: 700; font-size: 18px; }
+        .footer-icons { display: flex; gap: 15px; }
+        .footer-icons i { font-size: 20px; cursor: pointer; }
+
+        /* --- СЛАЙДЕР (ИЗ ПРЕДЫДУЩЕГО КОДА) --- */
+        .apartment-layout { display: flex; gap: 40px; align-items: flex-start; margin-bottom: 50px; flex-wrap: wrap; }
+        .gallery-wrapper { flex: 1; min-width: 300px; max-width: 700px; }
+        .swiper { width: 100%; height: 100%; }
+        .swiper-slide img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+        .mySwiper2 { height: 400px; margin-bottom: 15px; }
+        .mySwiper { height: 80px; padding: 0 10px; }
+        .mySwiper .swiper-slide { width: 25%; height: 100%; opacity: 0.6; cursor: pointer; }
+        .mySwiper .swiper-slide-thumb-active { opacity: 1; }
+        .mySwiper .swiper-slide img { border-radius: 8px; }
+        .swiper-button-next, .swiper-button-prev { color: #2b7af1; background: rgba(255,255,255,0.9); width: 40px; height: 40px; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .swiper-button-next:after, .swiper-button-prev:after { font-size: 18px; font-weight: bold; }
+
+        .info-wrapper { flex: 1; min-width: 300px; }
+        .info-title { font-size: 24px; font-weight: 700; margin-bottom: 15px; }
+        .info-desc { font-size: 14px; color: var(--text-grey); margin-bottom: 15px; line-height: 1.6; }
+        .price-block { display: flex; flex-direction: column; gap: 5px; margin-bottom: 15px; }
+        .price-value { color: var(--primary-blue); font-weight: 700; font-size: 22px; }
+        .btn-book { background-color: var(--accent-orange); color: #fff; border: none; 
+            padding: 12px 40px;
+             border-radius: 30px; 
+             font-weight: 600;
+              font-size: 16px; 
+              cursor: pointer; 
+              max-width: 250px; 
+              text-align: center;
+              display:flex; 
+              max-width: max-content;
+        
+             } 
+        .amenities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px 20px; margin-top: 20px; }
+        .amenity-item { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #333; }
+        .amenity-item i { color: var(--accent-orange); }
+
+        @media (max-width: 768px) {
+            .apartment-layout { flex-direction: column; }
+            .mySwiper2 { height: 250px; }
+            .reviews-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header header--background container">
+
+        <div class="content">
+            <div class="header-left">
+                
+                <div class="logo__icon">
+                                      <a href="/"><img class="logo__icon-image" src="Group 1(1).png" alt=""></a> 
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="icon__wrapper">
+                    <a class="header__icon icon" href=""><i class="fa-solid fa-phone"></i></a>
+                    <a class="header__icon icon" href=""><i class="fa-solid fa-envelope"></i></a>
+                    <a href="">
+                        <div><i></i><span></span></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="container">
+        <!-- СЕКЦИЯ КВАРТИРЫ -->
+        <section class="apartment-layout">
+            <div class="gallery-wrapper">
+                <div style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff" class="swiper mySwiper2">
+                    <div class="swiper-wrapper">
+                        <!-- Замените ссылки на свои фото -->
+                        <div class="swiper-slide"><img src="квартиры/квартира 1 1-х.jpg" /></div>
+                        <div class="swiper-slide"><img src="квартиры/кв 1 1.2-х.jpg" /></div>
+                        <div class="swiper-slide"><img src="квартиры/кв 1 1.3-х.jpg" /></div>
+                    </div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                </div>
+                <div thumbsSlider="" class="swiper mySwiper">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide"><img src="квартиры/квартира 1 1-х.jpg" /></div>
+                        <div class="swiper-slide"><img src="квартиры/кв 1 1.2-х.jpg" /></div>
+                        <div class="swiper-slide"><img src="квартиры/кв 1 1.3-х.jpg" /></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-wrapper">
+                <h1 class="info-title">Однокомнатная квартира</h1>
+                <p class="info-desc">Сдам 1-квартиру с балконом. Всё необходимое для проживания. Выписываем ДОКУМЕНТЫ ЧЕК.</p>
+                <div class="price-block">
+                    <span class="price-value">50 000 ₽</span>
+                    <span class="price-period">за месяц</span>
+                </div>
+
+                <div class="address-block" style="margin: 10px 0 20px; font-size:14px;">
+                    <i class="fas fa-map-marker-alt" style="color:var(--primary-blue);"></i> Миасс, ул. Инструментальщиков, 1
+                </div>
+              <div>  
+                <h3 style="margin-bottom: 15px;">Оснащение:</h3>
+                <div class="amenities-grid">
+                    <div class="amenity-item"><i class="fas fa-check-circle"></i> Холодильник</div>
+                    <div class="amenity-item"><i class="fas fa-check-circle"></i> Стиральная машина</div>
+                    <div class="amenity-item"><i class="fas fa-check-circle"></i> СВЧ</div>
+                    <div class="amenity-item"><i class="fas fa-check-circle"></i> Телевизор плазма</div>
+                    <div class="amenity-item"><i class="fas fa-check-circle"></i> Wi-fi</div>
+                    <div class="amenity-item"><i class="fas fa-check-circle"></i> Вся посуда</div>
+                </div>
+            </div>
+            <a class="btn-book" href="#contactForm">Забронировать</a>
+                
+
+            </div>
+        </section>
+
+       
+
+        <section class="about container">
+            <div class="content">
+                <h2 class="about__headline headline">О нас</h2>
+                <p class="about__text">Добро пожаловать в компанию "Высотки" – лидера в сфере высотного строительства и
+                    архитектурных решений.
+                    Мы специализируемся на проектировании и возведении современных небоскребов и многоэтажных зданий,
+                    которые не
+                    только впечатляют своим дизайном, но и отвечают самым высоким стандартам безопасности и
+                    устойчивости.
+                </p>
+                <div class="about__cards">
+
+
+                    <div class="about__card ">
+                        <img class="about__image" src="SVG foto/sup.svg" alt="">
+                        <div class="about__content">
+                            <p class="about__item about__item--big">40+</p>
+                            <p class="about__item">клиентов</p>
+                        </div>
+                    </div>
+
+                    <div class="about__card ">
+                        <img class="about__image" src="SVG foto/review 2.svg" alt="">
+                        <div class="about__content">
+                            <p class="about__item about__item--big">100</p>
+                            <p class="about__item">отзывов</p>
+                        </div>
+                    </div>
+
+                    <div class="about__card ">
+                        <img class="about__image" src="SVG foto/home 1.svg" alt="">
+                        <div class="about__content">
+                            <p class="about__item about__item--big">9</p>
+                            <p class="about__item">квартир</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="line">
+            <img class="line__img" src="line.png" alt="">
+
+        </div>
+
+
+        <section class="contacts container">
+            <div class="content">
+                <h2 class="headline">Контакты </h2>
+                <div class="contacts__links">
+
+                    <a class="contacts__link" href="#"><img class="contact__icon" src="SVG foto/metka.svg" alt=""> ул. Романенко,
+                        50
+                        офис 27Б, этаж
+                        4</a>
+                    <a class="contacts__link" href="#"><img class="contact__icon" src="SVG foto/tryba.svg" alt=""> +7 (906)
+                        860-78-39</a>
+                    <a class="contacts__link" href="#"><img class="contact__icon" src="SVG foto/Mail.svg" alt="">
+                        taniledi@mail.ru</a>
+
+                    <div class="button__wrapper">
+                        
+                        <a class="contacts__link" href="https://vk.com/vysotki_miass"><img class="contact__icon" src="SVG foto/vk.svg" alt=""> </a>
+                
+
+                        <a class="all-apartments__button button ">Подписаться</a>
+                    </div>
+                </div>
+                <div class="contacts__map">
+                    <div style="position:relative;overflow:hidden;"><a href="https://yandex.ru/maps/org/vysotki/5374249260/?utm_medium=mapframe&utm_source=maps" 
+                        style="color:#eee;font-size:12px;position:absolute;top:0px;">Высотки</a>
+                        <a href="https://yandex.ru/maps/11212/miass/category/real_estate_agency/184107503/?utm_medium=mapframe&utm_source=maps" 
+                        style="color:#eee;font-size:12px;position:absolute;top:14px;">Агентство недвижимости в Миассе</a>
+                        <a href="https://yandex.ru/maps/11212/miass/category/mortgage_agency/184107517/?utm_medium=mapframe&utm_source=maps" style="color:#eee;font-size:12px;position:absolute;top:28px;">Ипотечное агентство в Миассе</a>
+                        <iframe src="https://yandex.ru/map-widget/v1/?indoorLevel=1&ll=60.110838%2C55.047677&mode=search&oid=5374249260&ol=biz&z=18.74" width="100%" height="500" frameborder="1" allowfullscreen="true" style="position:relative;">
+                    </iframe></div>
+                    <!-- <a class="dg-widget-link"
+                        href="http://2gis.ru/miass/firm/12244690768033804/center/60.111029148101814,55.04861767231197/zoom/16?utm_medium=widget-source&utm_campaign=firmsonmap&utm_source=bigMap">Посмотреть
+                        на карте Миасса </a>
+                    <div class="dg-widget-link"><a
+                            href="http://2gis.ru/miass/firm/12244690768033804/photos/12244690768033804/center/60.111029148101814,55.04861767231197/zoom/17?utm_medium=widget-source&utm_campaign=firmsonmap&utm_source=photos">Фотографии
+                            компании</a></div>
+                    <div class="dg-widget-link"><a
+                            href="http://2gis.ru/miass/center/60.111023,55.048161/zoom/16/routeTab/rsType/bus/to/60.111023,55.048161╎Высотки, агентство недвижимости?utm_medium=widget-source&utm_campaign=firmsonmap&utm_source=route">Найти
+                            проезд до Высотки, агентство недвижимости</a></div>
+                    <script charset="utf-8" src="https://widgets.2gis.com/js/DGWidgetLoader.js"></script>
+                    <script
+                        charset="utf-8">new DGWidgetLoader({ "width": '100%', "height": '100%', "borderColor": "#a3a3a3", "pos": { "lat": 55.04861767231197, "lon": 60.111029148101814, "zoom": 16 }, "opt": { "city": "miass" }, "org": [{ "id": "12244690768033804" }] });</script>
+                    <noscript style="color:#c00;font-size:16px;font-weight:bold;">Виджет карты использует JavaScript.
+                        Включите его в
+                        настройках вашего браузера.</noscript> -->
+                </div>
+        </section>
+        <section class="reviews container">
+            <div class="content">
+                <h2 class="reviews__headline">Отзывы клиентов</h2>
+                <img class="reviews__decoration" src="SVG foto/quote.svg" alt="">
+                <div class="speech-bubble">
+                    <div class="title">
+                        Уютная квартира
+                        <span class="stars">★★★★★</span>
+                    </div>
+                    <p>Первый раз отдыхали в Миассе, времени было мало соответственно жильё искали заранее. Залог вносили с
+                        опасением, и очень рады что они были напрасными. Всё супер. Нам понравилось!</p>
+                    <div class="author">Екатерина Трушникова<br>г. Миасс</div>
+                    <div class="date">2 октября 2025</div>
+                </div>
+    
+                <div class="speech-bubble">
+                    <div class="title">
+                        Клёвый вид на город
+                        <span class="stars">★★★★★</span>
+                    </div>
+                    <p>Хочу поблагодарить за квартиру на ул. Инструментальщиков, д. 12. Удобное месторасположение, совсем
+                        рядом с
+                        центром. Квартира уютная, соседи не слышно, мы прекрасно отдохнули. Все что нужно для приготовления
+                        еды
+                        есть.</p>
+                    <div class="author">Иван Огородников<br>г. Миасс</div>
+                    <div class="date">15 сентября 2025</div>
+                </div>
+            </div>
+        </section>
+    
+        <!-- Форма обратной связи -->
+        <section class="contacts container">
+            <div class="content">
+                <div class="contact__wrapper">
+                    <form class="contacts__form" id="contactForm" action="#" method="POST" novalidate>
+                        <h2 class="headline">Напишите нам</h2>
+                        <input type="text" id="name" placeholder="Имя" required>
+                        <input type="email" id="email" placeholder="Email" required>
+                        <textarea id="message" placeholder="Ваше сообщение" required></textarea>
+                                        <!-- Исправленный чекбокс согласия -->
+                        <div class="consent__wrapper">
+                            <label class="consent__label">
+                                <input type="checkbox" id="consent" name="consent">
+                                <span class="consent__checkmark"></span>
+                                <span class="consent__text">Я согласен на <a href="personal.html" class="consent__link">обработку персональных данных</a></span>
+                            </label>
+                            <div class="consent__error" id="consentError" style="display: none; color: #dc3545; font-size: 12px; margin-top: 5px;">
+                                Пожалуйста, дайте согласие на обработку персональных данных
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn">Отправить</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Модальное окно (без изменений) -->
+        <div class="modal" id="successModal">
+            <div class="modal__content">
+                <span class="modal__close" id="closeModal">&times;</span>
+                <div class="modal__icon">✓</div>
+                <h2 class="modal__title">Спасибо за обращение!</h2>
+                <p class="modal__message">Ваше сообщение успешно отправлено. Мы свяжемся с вами в ближайшее время.</p>
+                <div class="modal__details" id="modalDetails"></div>
+                <button class="btn modal__btn" id="modalOkBtn">Хорошо</button>
+            </div>
+        </div>
+        
+    
+
+    <!-- ФУТЕР -->
+   
+        <div class="bottom-bar">
+            <div class="logo">ВЫСОТКИ<br></div>
+            <div class="social-icons">
+                <a href="#" target="_blank"><img src="JZnak.png" style="max-height: 30px;" alt=""></a>
+               
+
+                    <a class="contacts__link" href="https://vk.com/vysotki_miass"><img class="contact__icon" src="SVG foto/vk.svg" alt=""> </a>
+                
+            </div>
+        </div>
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        var swiper = new Swiper(".mySwiper", {
+            spaceBetween: 10,
+            slidesPerView: 4,
+            freeMode: true,
+            watchSlidesProgress: true,
+        });
+        var swiper2 = new Swiper(".mySwiper2", {
+            spaceBetween: 10,
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+            thumbs: {
+                swiper: swiper,
+            },
+        });
+    </script>
+</body>
+</html>
